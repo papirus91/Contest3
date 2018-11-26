@@ -1,0 +1,90 @@
+import java.awt.Point;
+import java.util.ArrayList;
+
+
+public class Contest {
+	static int rows = 6;
+	static int columns = 6;
+	
+
+    static int[][] maze = { 
+        {2,0,0,1,1,1},
+        {1,1,0,0,1,1},
+        {1,1,1,0,0,1}, 
+        {1,1,1,1,0,0},
+        {1,1,1,1,1,0},
+        {1,1,1,1,1,3}};
+public static boolean[][] visited = new boolean[rows][columns];
+static ArrayList<Point> neighbours = new ArrayList<Point>();
+
+public static void main(String[] args) {
+    for (int i=0;i<rows;i++){
+        for (int j=0;j<columns;j++){
+            visited[i][j] = false;
+        }
+    }
+    visited[0][0] = true;
+    Point starting_point = new Point();
+    starting_point.x = 0;
+    starting_point.y = 0;
+    System.out.println("0,0");
+    dfs(maze, starting_point);
+}
+
+public static boolean dfs(int[][] maze, Point p){
+    neighbours = getNeighbours(maze,p);
+    if (maze[p.x][p.y] == 3){
+        System.out.println("FOUND IT!");
+        return true;
+    }
+    if (neighbours.isEmpty()){
+        return false;
+    }
+    for (int i=0;i<neighbours.size();i++){
+        System.out.println(i + "(" + p.x + "," + p.y + ")");
+        visited[neighbours.get(i).x][neighbours.get(i).y] = true;
+        if(dfs(maze, neighbours.get(i))){
+            return true;
+        }
+    }
+    return false;
+}
+
+public static ArrayList<Point> getNeighbours(int[][] maze, Point p){
+    ArrayList<Point> neighbors = new ArrayList<Point>();
+    Point left = new Point();
+    Point right = new Point();
+    Point down = new Point();
+    Point up = new Point();
+    down.x = p.x - 1;
+    down.y = p.y;
+    if (valid(maze,down)) neighbors.add(down);
+    up.x = p.x + 1;
+    up.y = p.y;
+    if (valid(maze,up)) neighbors.add(up);
+    left.x = p.x;
+    left.y = p.y - 1;
+    if (valid(maze,left)) neighbors.add(left);
+    right.x = p.x;
+    right.y = p.y + 1;
+    if (valid(maze,right)) neighbors.add(right);
+    return neighbors;
+}
+
+public static boolean valid(int[][] maze, Point p){
+    if (inMaze(maze,p) && canGo(maze,p) && visited[p.x][p.y] == false) return true;
+    else return false;
+}
+
+public static boolean inMaze(int[][] maze, Point p){
+	if (p.x < rows && p.x > -1 && p.y < columns && p.y > -1){
+        return true;
+    } else return false;
+}
+
+public static boolean canGo(int[][] maze, Point p){
+    if (maze[p.x][p.y] != 1) return true;
+    else return false;  
+}
+
+}
